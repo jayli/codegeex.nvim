@@ -1,0 +1,6 @@
+*.swp
+.netrwhist
+./bundle/YouCompleteMe
+./bundle/YouCompleteMe/*
+pythonx/EasyCompleteUtil/__pycache__/
+pythonx/__pycache__/
