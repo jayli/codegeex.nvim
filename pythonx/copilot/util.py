@@ -69,13 +69,28 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
         'x-client-type': 'neovim'
     }
 
+
     try:
+        #response = requests.request("POST", url, data=json.dumps(post_json),
         response = requests.request("POST", END_POINT, data=json.dumps(post_json),
                                     headers=headers, timeout=timeout_setting)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        vim.async_call(response_handler, '{error}')
+        return
     except requests.exceptions.Timeout as e:
         # vim.command("echom '调用超时'")
         vim.async_call(response_handler, '{timeout}')
         return
+    except requests.exceptions.RequestException as err:
+        vim.async_call(response_handler, '{error}')
+        return
+
+    # aaa = "all_list = all_list.concat(content.trim().split('\n'));\n\n"
+    # bbb = aaa.replace("'", "''")
+    # vim.async_call(cache_response_pos, lnum, col)
+    # vim.async_call(response_handler, bbb)
+    # return
 
     if response.status_code == 429:
         # 次数太频繁被限流
@@ -83,7 +98,14 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
         return
 
     result = json.loads(response.text)
-    result_str = result["choices"][0]["message"]["content"]
+    try:
+        result_str = result["choices"][0]["message"]["content"]
+    except KeyError:
+        vim.async_call(print, 'response.choices 格式错误')
+        return
+    vim.async_call(print, '-----------------')
+    vim.async_call(print, result_str)
+    vim.async_call(print, '-----------------')
     result_str = result_str.replace("'", "''")
     vim.async_call(cache_response_pos, lnum, col)
     vim.async_call(response_handler, result_str)

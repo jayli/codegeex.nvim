@@ -121,6 +121,7 @@ function! copilot#complete_done()
 endfunction
 
 function! s:lazy_fire(delay)
+  echom 88888
   if g:copilot_suggest_timer > 0
     call timer_stop(g:copilot_suggest_timer)
     let g:copilot_suggest_timer = 0
@@ -232,7 +233,7 @@ endfunction
 
 " 主要判断哪些情况不要触发
 function! s:ready()
-  if !exists("g:copilot_token") || empty(g:copilot_token)
+  if !exists("g:codegeex_apikey") || empty(g:codegeex_apikey)
     return v:false
   endif
   if &filetype == "none" || &buftype == "nofile" || &buftype == "terminal"
@@ -452,6 +453,10 @@ function! copilot#callback(res_str)
     return
   elseif a:res_str == "{429}"
     " 限流
+    call s:flush()
+    return
+  elseif a:res_str == "{error}"
+    " 权限校验失败
     call s:flush()
     return
   endif
