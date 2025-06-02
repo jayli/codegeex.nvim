@@ -121,7 +121,6 @@ function! copilot#complete_done()
 endfunction
 
 function! s:lazy_fire(delay)
-  echom 88888
   if g:copilot_suggest_timer > 0
     call timer_stop(g:copilot_suggest_timer)
     let g:copilot_suggest_timer = 0
@@ -257,6 +256,10 @@ function! s:isbacking()
     let b:copilot_backing = 0
   endif
   return b:copilot_backing
+endfunction
+
+function! s:trim_start(str)
+  return substitute(a:str, "^\\s\\+\\(.\\{\-}\\)$","\\1","g")
 endfunction
 
 function! s:trim_end(str)
@@ -480,6 +483,25 @@ function! copilot#copilot_snippet_ready()
 endfunction
 
 function! s:remove_blank_spaces(res_str)
+  echom '>>>'
+  echom a:res_str
+  echom strlen(a:res_str)
+  echom '====='
+  let l:ret = a:res_str
+  " 如果是空行，把开头的\n去掉
+  if empty(trim(getline('.')))
+    let l:ret = substitute(l:ret, '^\\n', '', '')
+  endif
+  let l:ret = substitute(l:ret, '\\n\\n$', '\\n', '')
+  " 如果光标不在首行，去掉开头的空格
+  if col('.') >= 3
+    let l:ret = s:trim_start(l:ret)
+  endif
+  let l:ret = s:trim_end(l:ret)
+  echom l:ret
+  echom strlen(l:ret)
+  echom '<<<'
+  return l:ret
   if !empty(trim(getline('.')))
     return a:res_str
   endif

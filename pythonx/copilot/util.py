@@ -6,6 +6,7 @@ import threading
 import requests
 import vim
 import os
+import time
 from .rate_limiter import RateLimiter
 
 END_POINT = "http://open.bigmodel.cn/api/paas/v4/chat/completions"
@@ -51,6 +52,10 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
     url = "https://www.baidu.com"
     post_json = {
         "model": "codegeex-4",
+        "request_id": int(time.time()),
+        "stream": False,
+        "temperature": 0.2,
+        "stop":["<|endoftext|>", "<|user|>", "<|assistant|>", "<|observation|>"],
         "extra":{
             "target": {
                 "path": FILE_NAME,
@@ -104,7 +109,7 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
         vim.async_call(print, 'response.choices 格式错误')
         return
     vim.async_call(print, '-----------------')
-    vim.async_call(print, result_str)
+    vim.async_call(print, col)
     vim.async_call(print, '-----------------')
     result_str = result_str.replace("'", "''")
     vim.async_call(cache_response_pos, lnum, col)
