@@ -1,0 +1,34 @@
+" finish
+if !has('nvim')
+  finish
+endif
+
+if !has('python3')
+  finish
+endif
+
+if !exists("g:codegeex_apikey")
+  let g:codegeex_apikey = ""
+endif
+
+if empty(g:codegeex_apikey)
+  finish
+endif
+
+let g:copilot_ready = v:true
+if has('vim_starting')
+  augroup codegeex_copilot
+    autocmd!
+    autocmd BufReadPost,BufNewFile * call copilot#init()
+    autocmd TextChangedI * call copilot#text_changed_i()
+    autocmd CursorHoldI * call copilot#cursor_hold_i()
+    autocmd InsertLeave * call copilot#insert_leave()
+    autocmd CompleteChanged * call copilot#complete_changed()
+    autocmd CursorMovedI * call copilot#cursor_moved_i()
+  augroup END
+else
+  call copilot#init()
+endif
+
+
+" vim:ts=2:sw=2:sts=2
