@@ -322,6 +322,7 @@ function! s:context() abort
 endfunction
 
 function! copilot#cache_response_pos(lnum, col)
+  echom "OOOKKK"
   let g:copilot_global_response_pos["lnum"] = a:lnum
   let g:copilot_global_response_pos["col"] = a:col
 endfunction
@@ -410,7 +411,8 @@ function! s:fire()
   let g:copilot_global_prompt = copilot#get_prompt()
   let g:copilot_global_suffix = copilot#get_suffix()
   let g:copilot_global_context = copilot#context()
-  py3 Util.do_complete()
+  " py3 Util.do_complete()
+  call DoCopilotComplete()
 endfunction
 
 function! s:not_insert_mode()

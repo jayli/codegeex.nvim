@@ -10,6 +10,8 @@ https://github.com/user-attachments/assets/1065a9f3-213c-4fd6-829e-78021926d42b
 
 #### 一）安装：
 
+1）配置 init.lua
+
 基于 Packer.nvim 安装：
 
 ```lua
@@ -19,6 +21,12 @@ vim.g.deepseek_base_url = ""   --留空即可
 ```
 
 执行`:PackerInstall`
+
+2）安装 python 依赖
+
+```bash
+pip install httpx
+```
 
 #### 二）获得 deepseek apikey
 

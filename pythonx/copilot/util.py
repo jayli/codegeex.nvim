@@ -4,6 +4,10 @@ import json
 import threading
 import requests
 import vim
+try:
+    import pynvim as neovim
+except ImportError:
+    import neovim
 import os
 import time
 import asyncio
@@ -172,14 +176,15 @@ async def get_completions(file_path, prompt, suffix, lnum, col, lang):
     # vim.async_call(response_handler, bbb)
     # return
 
-def do_complete():
+async def do_complete():
     if rate_limiter.is_allowed():
-        completions_request_async()
+        await completions_request_async()
         safe_vim_eval("copilot#loading_start()")
     else:
         safe_vim_eval("copilot#loading_stop()")
         pass
 
-if __name__ == "__main__":
-    completions_request_async()
+
+# if __name__ == "__main__":
+#     completions_request_async()
 
