@@ -11,6 +11,10 @@ if !exists("g:deepseek_apikey")
   let g:deepseek_apikey = ""
 endif
 
+if !exists("g:deepseek_base_url")
+  let g:deepseek_base_url = "https://api.deepseek.com/beta"
+endif
+
 if empty(g:deepseek_apikey)
   finish
 endif

@@ -10,7 +10,7 @@ import time
 from .rate_limiter import RateLimiter
 
 # https://api-docs.deepseek.com/zh-cn/api/create-completion
-END_POINT = "https://api.deepseek.com/beta/completions"
+END_POINT = vim.eval("g:deepseek_base_url") + "/completions"
 API_TOKEN = vim.eval("g:deepseek_apikey")
 FILE_NAME = vim.eval("expand('%:p')")
 # 5 秒内少于 10 次请求
@@ -87,6 +87,7 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
         vim.async_call(response_handler, '{error}')
         return
 
+    # TODO 如果字符串内有"\n"的情况下的处理
     # aaa = "all_list = all_list.concat(content.trim().split('\n'));\n\n"
     # bbb = aaa.replace("'", "''")
     # vim.async_call(cache_response_pos, lnum, col)
@@ -104,9 +105,6 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
     except KeyError:
         vim.async_call(print, 'response.choices 格式错误')
         return
-    # vim.async_call(print, '-----------------')
-    # vim.async_call(print, col)
-    # vim.async_call(print, '-----------------')
     result_str = result_str.replace("'", "''")
     vim.async_call(cache_response_pos, lnum, col)
     vim.async_call(response_handler, result_str)
