@@ -1,6 +1,6 @@
 ## Deepseek-coder.nvim
 
-基于 Deepseek 的 coder copilot 补全插件。
+Nvim 基于 Deepseek 的 coder copilot 补全插件。
 
 <img src="https://github.com/user-attachments/assets/37a4ab70-beff-4229-bee8-9aacd26d207f" width=400 />
 
@@ -22,7 +22,7 @@ vim.g.deepseek_base_url = ""   --留空即可
 
 #### 二）获得 deepseek apikey
 
-登录：https://platform.deepseek.com/api_keys
+登录：<https://platform.deepseek.com/api_keys>
 
 创建你的 API key，创建好后需要将 key 复制下来，填写到`vim.g.deepseek_apikey`处。
 
@@ -30,7 +30,7 @@ vim.g.deepseek_base_url = ""   --留空即可
 
 #### 三）使用
 
-插入模式下，正常输入时会自动联想，联想完成后敲 Tab 键完成补全，因为对 Tab 键有强绑定，所以也做了对一些常用补全插件的兼容（coc、nvim-cmp 和 vim-easycomplete）。
+插入模式下，正常输入时会自动联想，联想完成后敲 Tab 键完成补全，因为对 Tab 键有强绑定，所以也做了对一些常用补全插件的兼容（[coc](https://github.com/neoclide/coc.nvim)、[nvim-cmp](https://github.com/hrsh7th/nvim-cmp) 和 [vim-easycomplete](https://github.com/jayli/vim-easycomplete)）。
 
 #### 四）注意
 
