@@ -2,9 +2,11 @@
 
 基于 Deepseek 的 coder copilot 补全插件。
 
-图
+![logo](https://github.com/user-attachments/assets/37a4ab70-beff-4229-bee8-9aacd26d207f)
 
-视频
+演示：
+
+https://github.com/user-attachments/assets/1065a9f3-213c-4fd6-829e-78021926d42b
 
 #### 一）安装：
 
@@ -24,7 +26,7 @@ vim.g.deepseek_base_url = ""   --留空即可
 
 创建你的 API key，创建好后需要将 key 复制下来，填写到`vim.g.deepseek_apikey`处。
 
-图
+![apikey](https://github.com/user-attachments/assets/3333d2c8-5156-43f9-89db-006e186d73fc)
 
 #### 三）使用
 
