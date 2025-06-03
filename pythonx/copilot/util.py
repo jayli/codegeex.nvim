@@ -9,7 +9,8 @@ import os
 import time
 from .rate_limiter import RateLimiter
 
-END_POINT = "http://open.bigmodel.cn/api/paas/v4/chat/completions"
+# https://api-docs.deepseek.com/zh-cn/api/create-completion
+END_POINT = "https://api.deepseek.com/beta/completions"
 API_TOKEN = vim.eval("g:codegeex_apikey")
 FILE_NAME = vim.eval("expand('%:p')")
 # 5 秒内少于 10 次请求
@@ -50,21 +51,17 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
     # prompt 就是 prefix
     timeout_setting = 13
     url = "https://www.baidu.com"
+
     post_json = {
-        "model": "codegeex-4",
+        "model": "deepseek-coder",
         "request_id": int(time.time()),
         "stream": False,
         "temperature": 0.2,
         "stop":["<|endoftext|>", "<|user|>", "<|assistant|>", "<|observation|>"],
-        "extra":{
-            "target": {
-                "path": FILE_NAME,
-                "language": lang,
-                "code_prefix": prompt,
-                "code_suffix": suffix
-            },
-            "contexts": []
-        }
+        "prompt": prompt,
+        "suffix": suffix,
+        "echo":False,
+        "max_tokens": 1024
     }
 
     headers = {
@@ -76,7 +73,6 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
 
 
     try:
-        #response = requests.request("POST", url, data=json.dumps(post_json),
         response = requests.request("POST", END_POINT, data=json.dumps(post_json),
                                     headers=headers, timeout=timeout_setting)
         response.raise_for_status()
@@ -104,13 +100,13 @@ def get_completions(file_path, prompt, suffix, lnum, col, lang):
 
     result = json.loads(response.text)
     try:
-        result_str = result["choices"][0]["message"]["content"]
+        result_str = result["choices"][0]["text"]
     except KeyError:
         vim.async_call(print, 'response.choices 格式错误')
         return
-    vim.async_call(print, '-----------------')
-    vim.async_call(print, col)
-    vim.async_call(print, '-----------------')
+    # vim.async_call(print, '-----------------')
+    # vim.async_call(print, col)
+    # vim.async_call(print, '-----------------')
     result_str = result_str.replace("'", "''")
     vim.async_call(cache_response_pos, lnum, col)
     vim.async_call(response_handler, result_str)

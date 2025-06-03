@@ -7,11 +7,11 @@ if !has('python3')
   finish
 endif
 
-if !exists("g:codegeex_apikey")
-  let g:codegeex_apikey = ""
+if !exists("g:deepseek_apikey")
+  let g:deepseek_apikey = ""
 endif
 
-if empty(g:codegeex_apikey)
+if empty(g:deepseek_apikey)
   finish
 endif
 
