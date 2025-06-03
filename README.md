@@ -2,7 +2,7 @@
 
 基于 Deepseek 的 coder copilot 补全插件。
 
-![logo](https://github.com/user-attachments/assets/37a4ab70-beff-4229-bee8-9aacd26d207f)
+<img src="https://github.com/user-attachments/assets/37a4ab70-beff-4229-bee8-9aacd26d207f" width=400 />
 
 演示：
 
