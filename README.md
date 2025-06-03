@@ -12,7 +12,7 @@ https://github.com/user-attachments/assets/1065a9f3-213c-4fd6-829e-78021926d42b
 
 基于 Packer.nvim 安装：
 
-```
+```lua
 use { 'jayli/deepseek-coder.nvim' }
 vim.g.deepseek_apikey = "{你的 deepseek apikey}"
 vim.g.deepseek_base_url = ""   --留空即可
