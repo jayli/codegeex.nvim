@@ -26,7 +26,7 @@ vim.g.deepseek_base_url = ""   --留空即可
 
 创建你的 API key，创建好后需要将 key 复制下来，填写到`vim.g.deepseek_apikey`处。
 
-![apikey](https://github.com/user-attachments/assets/3333d2c8-5156-43f9-89db-006e186d73fc)
+<img src="https://github.com/user-attachments/assets/3333d2c8-5156-43f9-89db-006e186d73fc" width=500 />
 
 #### 三）使用
 
