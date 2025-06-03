@@ -17,7 +17,7 @@ endif
 
 let g:copilot_ready = v:true
 if has('vim_starting')
-  augroup codegeex_copilot
+  augroup deepseek_copilot
     autocmd!
     autocmd BufReadPost,BufNewFile * call copilot#init()
     autocmd TextChangedI * call copilot#text_changed_i()

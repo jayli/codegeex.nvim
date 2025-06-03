@@ -11,7 +11,7 @@ from .rate_limiter import RateLimiter
 
 # https://api-docs.deepseek.com/zh-cn/api/create-completion
 END_POINT = "https://api.deepseek.com/beta/completions"
-API_TOKEN = vim.eval("g:codegeex_apikey")
+API_TOKEN = vim.eval("g:deepseek_apikey")
 FILE_NAME = vim.eval("expand('%:p')")
 # 5 秒内少于 10 次请求
 rate_limiter = RateLimiter(9, 5)
