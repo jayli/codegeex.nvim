@@ -2,6 +2,5 @@
 .netrwhist
 ./bundle/YouCompleteMe
 ./bundle/YouCompleteMe/*
-pythonx/EasyCompleteUtil/__pycache__/
-pythonx/__pycache__/
-pythonx/__pycache__/*
+pythonx/copilot/__pycache__/*
+.DS_Store
