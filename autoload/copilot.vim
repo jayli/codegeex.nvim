@@ -1,4 +1,4 @@
-" Codegeex Copilot for NeoVim
+" Deepseek Copilot for NeoVim
 " Author by @bachi
 let s:copilot_toolkit = has('nvim') ? v:lua.require("copilot") : v:null
 let b:tabnine_typing_type = ""
@@ -232,7 +232,7 @@ endfunction
 
 " 主要判断哪些情况不要触发
 function! s:ready()
-  if !exists("g:codegeex_apikey") || empty(g:codegeex_apikey)
+  if !exists("g:deepseek_apikey") || empty(g:deepseek_apikey)
     return v:false
   endif
   if &filetype == "none" || &buftype == "nofile" || &buftype == "terminal"
@@ -483,10 +483,10 @@ function! copilot#copilot_snippet_ready()
 endfunction
 
 function! s:remove_blank_spaces(res_str)
-  echom '>>>'
-  echom a:res_str
-  echom strlen(a:res_str)
-  echom '====='
+  " echom '>>>'
+  " echom a:res_str
+  " echom strlen(a:res_str)
+  " echom '====='
   let l:ret = a:res_str
   " 如果是空行，把开头的\n去掉
   if empty(trim(getline('.')))
@@ -498,9 +498,9 @@ function! s:remove_blank_spaces(res_str)
     let l:ret = s:trim_start(l:ret)
   endif
   let l:ret = s:trim_end(l:ret)
-  echom l:ret
-  echom strlen(l:ret)
-  echom '<<<'
+  " echom l:ret
+  " echom strlen(l:ret)
+  " echom '<<<'
   return l:ret
   if !empty(trim(getline('.')))
     return a:res_str
