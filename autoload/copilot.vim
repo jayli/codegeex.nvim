@@ -233,7 +233,6 @@ function! copilot#cursor_hold_i()
   if s:isbacking()
     " do nothting
   else
-    echom "hold_i"
     call s:lazy_fire(20)
   endif
 endfunction
