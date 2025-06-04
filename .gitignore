@@ -3,4 +3,6 @@
 ./bundle/YouCompleteMe
 ./bundle/YouCompleteMe/*
 pythonx/copilot/__pycache__/*
+rplugin/python3/__pycache__/*
+rplugin/python3/__pycache__
 .DS_Store
