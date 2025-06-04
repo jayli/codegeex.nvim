@@ -256,12 +256,14 @@ function! copilot#insert_leave()
   call s:flush()
 endfunction
 
+function! copilot#cursor_hold()
+  if !s:ready() | return | endif
+  call s:flush()
+endfunction
+
 function! copilot#insert_enter()
   if !s:ready() | return | endif
   call s:flush()
-  " if !exists('b:typing_ctx')
-  "   let b:typing_ctx = s:context()
-  " endif
 endfunction
 
 function! copilot#complete_changed()
