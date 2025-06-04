@@ -11,6 +11,7 @@ let g:copilot_global_context = {}
 let g:copilot_global_response_pos = {}
 let g:copilot_req_queue = []
 let g:copilot_suggest_timer = 0
+let g:copilot_just_after_insert = 0
 
 function! copilot#cmp_visible()
   if s:installed_cmp_plugin() != "cmp" | return v:false | endif
@@ -121,7 +122,13 @@ function! copilot#complete_done()
 endfunction
 
 function! s:lazy_fire(delay)
-  if g:copilot_suggest_timer > 0
+  if g:copilot_just_after_insert == 1 " 如果是 Tab 后插入的结果要过滤掉
+    call timer_stop(g:copilot_suggest_timer)
+    let g:copilot_suggest_timer = 0
+    let g:copilot_just_after_insert = 0
+    call s:flush()
+    return
+  elseif g:copilot_suggest_timer > 0
     call timer_stop(g:copilot_suggest_timer)
     let g:copilot_suggest_timer = 0
   endif
@@ -131,7 +138,7 @@ endfunction
 function! copilot#tab_action()
   let cmp_plugin = s:installed_cmp_plugin()
   if s:copilot_snippet_ready()
-    call copilot#insert()
+    silent! noa call copilot#insert()
     return ""
   endif
   if cmp_plugin == "easycomplete"
@@ -226,6 +233,7 @@ function! copilot#cursor_hold_i()
   if s:isbacking()
     " do nothting
   else
+    echom "hold_i"
     call s:lazy_fire(20)
   endif
 endfunction
@@ -322,7 +330,6 @@ function! s:context() abort
 endfunction
 
 function! copilot#cache_response_pos(lnum, col)
-  echom "OOOKKK"
   let g:copilot_global_response_pos["lnum"] = a:lnum
   let g:copilot_global_response_pos["col"] = a:col
 endfunction
@@ -552,7 +559,7 @@ function! s:flush()
     call CancelCopilotComplete()
   catch /117/
     silent! noa UpdateRemotePlugins
-    call CancelCopilotComplete()
+    " call CancelCopilotComplete()
   endtry
 
   if exists("s:copilot_hint_snippet") && empty(s:copilot_hint_snippet)
@@ -565,6 +572,7 @@ function! s:flush()
   let g:copilot_global_suffix = ""
   let g:copilot_global_context = {}
   let g:copilot_global_response_pos = {}
+  let g:copilot_just_after_insert = 0
 endfunction
 
 function! s:nr()
@@ -601,6 +609,7 @@ function! s:insert()
       call s:remain_insert_mode()
       redraw
     endif
+    let g:copilot_just_after_insert = 1
   catch
     echom v:exception
   endtry
@@ -651,6 +660,15 @@ endfunction
 
 function! copilot#get_fgcolor(name)
   return s:get_hi_color(a:name, "fg")
+endfunction
+
+function! copilot#regist_rplugin()
+  let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
+  if &runtimepath =~ 'deepseek-coder.nvim'
+  else
+    exec "set runtimepath+=" . s:plugin_root
+    silent! noa UpdateRemotePlugins
+  endif
 endfunction
 
 " Get color from a scheme group

@@ -17,7 +17,6 @@ https://github.com/user-attachments/assets/1065a9f3-213c-4fd6-829e-78021926d42b
 ```lua
 use { 'jayli/deepseek-coder.nvim' }
 vim.g.deepseek_apikey = "{你的 deepseek apikey}"
-vim.g.deepseek_base_url = ""   --留空即可
 ```
 
 执行`:PackerInstall`
@@ -39,6 +38,12 @@ pip install httpx
 #### 三）使用
 
 插入模式下，正常输入时会自动联想，联想完成后敲 Tab 键完成补全，因为对 Tab 键有强绑定，所以也做了对一些常用补全插件的兼容（[coc](https://github.com/neoclide/coc.nvim)、[nvim-cmp](https://github.com/hrsh7th/nvim-cmp) 和 [vim-easycomplete](https://github.com/jayli/vim-easycomplete)）。
+
+可选配置：
+
+```
+vim.g.deepseek_base_url = "{your deepseek base url}" -- 默认是 https://api.deepseek.com/v1
+vim.g.deepseek_timeout = 10     -- 默认是 10
 
 #### 四）注意
 

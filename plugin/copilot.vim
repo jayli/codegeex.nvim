@@ -15,6 +15,10 @@ if !exists("g:deepseek_base_url")
   let g:deepseek_base_url = ""
 endif
 
+if !exists("g:deepseek_timeout")
+  let g:deepseek_timeout = 5
+endif
+
 if empty(g:deepseek_base_url)
   let g:deepseek_base_url = "https://api.deepseek.com/beta"
 endif
@@ -29,6 +33,8 @@ else
   exec "set runtimepath+=" . s:plugin_root
   silent! noa UpdateRemotePlugins
 endif
+
+call timer_start(10, { -> copilot#regist_rplugin()})
 
 let g:copilot_ready = v:true
 if has('vim_starting')

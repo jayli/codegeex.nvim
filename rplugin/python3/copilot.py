@@ -35,6 +35,7 @@ class MyPlugin:
         self.END_POINT = nvim.eval("g:deepseek_base_url") + "/completions"
         self.API_TOKEN = nvim.eval("g:deepseek_apikey")
         self.FILE_NAME = nvim.eval("expand('%:p')")
+        self.TIME_OUT = nvim.eval("g:deepseek_timeout")
         self.reset_post_task()
         # 5 秒内少于 10 次请求
         self.rate_limiter = RateLimiter(9, 5)
@@ -108,9 +109,8 @@ class MyPlugin:
         pass
 
     async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
-        global global_post_task
         # prompt 就是 prefix
-        timeout_setting = 5
+        timeout_setting = self.TIME_OUT
         url = "https://www.baidu.com"
 
         post_json = {
