@@ -23,14 +23,12 @@ if empty(g:deepseek_apikey)
   finish
 endif
 
-
 let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
 if &runtimepath =~ 'deepseek-coder.nvim'
 else
   exec "set runtimepath+=" . s:plugin_root
   silent! noa UpdateRemotePlugins
 endif
-
 
 let g:copilot_ready = v:true
 if has('vim_starting')

@@ -43,7 +43,7 @@ function! copilot#init()
     return v:false
   endif
   call v:lua.require("copilot").init()
-  py3 import copilot.util as Util
+  " py3 import copilot.copilot
   let b:typing_ctx = s:context()
   if !s:ready() | return | endif
   call timer_start(900, { -> s:bind_event_once()})
