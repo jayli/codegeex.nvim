@@ -81,7 +81,6 @@ function! copilot#get_suffix()
 endfunction
 
 function! s:bind_event_once()
-  " call s:console("")
   if get(g:, 'copilot_binding_done')
     return
   endif
@@ -116,9 +115,9 @@ function! copilot#complete_done()
   if !s:ready()
     return
   endif
-  if !s:isbacking()
-    call s:lazy_fire(200)
-  endif
+  " if !s:isbacking()
+  "   call s:lazy_fire(200)
+  " endif
 endfunction
 
 function! s:lazy_fire(delay)
@@ -224,6 +223,10 @@ function! copilot#text_changed_i()
   else
     let b:copilot_backing = 0
   endif
+  " call s:console('text_changed_i', s:isbacking() ? "<-" : "->")
+  if !s:isbacking()
+    call s:lazy_fire(700)
+  endif
 endfunction
 
 function! copilot#cursor_hold_i()
@@ -233,7 +236,7 @@ function! copilot#cursor_hold_i()
   if s:isbacking()
     " do nothting
   else
-    call s:lazy_fire(20)
+    " call s:lazy_fire(700)
   endif
 endfunction
 
@@ -251,6 +254,14 @@ endfunction
 function! copilot#insert_leave()
   if !s:ready() | return | endif
   call s:flush()
+endfunction
+
+function! copilot#insert_enter()
+  if !s:ready() | return | endif
+  call s:flush()
+  " if !exists('b:typing_ctx')
+  "   let b:typing_ctx = s:context()
+  " endif
 endfunction
 
 function! copilot#complete_changed()

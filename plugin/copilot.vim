@@ -44,6 +44,7 @@ if has('vim_starting')
     autocmd TextChangedI * call copilot#text_changed_i()
     autocmd CursorHoldI * call copilot#cursor_hold_i()
     autocmd InsertLeave * call copilot#insert_leave()
+    autocmd InsertEnter * call copilot#insert_enter()
     autocmd CompleteChanged * call copilot#complete_changed()
     autocmd CursorMovedI * call copilot#cursor_moved_i()
   augroup END
