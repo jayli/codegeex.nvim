@@ -192,10 +192,3 @@ class MyPlugin:
     async def callback_task(self):
         await self.completions_request_async()
 
-
-
-
-
-
-
-
