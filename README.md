@@ -44,6 +44,7 @@ pip install httpx
 ```
 vim.g.deepseek_base_url = "{your deepseek base url}" -- 默认是 https://api.deepseek.com/v1
 vim.g.deepseek_timeout = 10     -- 默认是 10
+```
 
 #### 四）注意
 
