@@ -10,23 +10,44 @@ import asyncio
 import httpx
 # from .rate_limiter import RateLimiter
 
-#global_task = 0
+class RateLimiter:
+    # limit: 次数, 比如 10
+    # duration: 时间间隔，单位秒，比如 5
+    def __init__(self, limit, duration):
+        self.limit = limit
+        self.duration = duration
+        self.timestamps = []
+
+    def is_allowed(self):
+        current_time = time.time()
+        self.timestamps = [t for t in self.timestamps if t > current_time - self.duration]
+        if len(self.timestamps) < self.limit:
+            self.timestamps.append(current_time)
+            return True
+        else:
+            return False
 
 @neovim.plugin
 class MyPlugin:
     def __init__(self, nvim):
         self.nvim = nvim
+        self.post_task = None
         self.END_POINT = nvim.eval("g:deepseek_base_url") + "/completions"
         self.API_TOKEN = nvim.eval("g:deepseek_apikey")
         self.FILE_NAME = nvim.eval("expand('%:p')")
-        self.nvim.command('echom "hello from DoItPython ' + self.API_TOKEN + '"')
+        self.reset_post_task()
+        # 5 秒内少于 10 次请求
+        self.rate_limiter = RateLimiter(9, 5)
 
-    def safe_vim_eval(self, expression):
+    def reset_post_task(self):
+        del self.post_task
+        self.post_task = asyncio.create_task(asyncio.sleep(0))
+
+    def nvim_call(self, expression):
         try:
-            return self.nvim.eval(expression)
+            self.nvim.async_call(self.nvim.eval, expression)
         except self.nvim.error:
             return None
-
 
     async def post_request(self, client, url, headers, payload, timeout):
         try:
@@ -52,10 +73,7 @@ class MyPlugin:
             }
 
     async def response_handler(self, res):
-        await self.async_eval("copilot#loading_stop()")
         await self.async_eval("copilot#callback('" + res + "')")
-        # self.safe_vim_eval("copilot#loading_stop()")
-        # self.nvim.eval("copilot#callback('" + res + "')")
         pass
 
     async def cache_response_pos(self, lnum, col):
@@ -76,78 +94,63 @@ class MyPlugin:
     
     def log(self, astr):
         txt_t = str(astr)
-        self.nvim.async_call(self.nvim.command, "echom '" + txt_t.replace("'", "''") + "'")
+        self.nvim.async_call(self.nvim.command,
+                             "echom '[PY LOG] " + txt_t.replace("'", "''") + "'")
 
     async def completions_request_async(self):
-        self.nvim.async_call(self.nvim.command, "echom 'Hello'")
         file_path = await self.async_eval("expand('%:p')")
         prompt = await self.async_eval("g:copilot_global_prompt")
         suffix = await self.async_eval("g:copilot_global_suffix")
         lnum = await self.async_eval("get(g:copilot_global_context,'lnum')")
         col = await self.async_eval("get(g:copilot_global_context,'col')")
         lang = await self.async_eval("copilot#lang()")
-        # 记录 lnum 和 col，用以判断返回的 snippet 是否还是跟随原有光标位置，决定是否丢弃
-        # fetch_thread = threading.Thread(target=get_completions, args=(file_path, prompt, suffix, lnum, col, lang))
-        #fetch_thread = threading.Thread(target=asyncio.run, args=get_completions(file_path, prompt, suffix, lnum, col, lang))
-        #fetch_thread.start()
-        #asyncio.run(get_completions(file_path, prompt, suffix, lnum, col, lang))
         await self.get_completions(file_path, prompt, suffix, lnum, col, lang)
         pass
 
     async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
-        # global global_task
-        self.nvim.async_call(self.nvim.command, 'echom "iiiiiiiiiiiiii"')
+        global global_post_task
         # prompt 就是 prefix
-        timeout_setting = 10
+        timeout_setting = 5
         url = "https://www.baidu.com"
 
         post_json = {
             "model": "deepseek-coder",
             "request_id": int(time.time()),
+            "echo":False,
             "stream": False,
             "temperature": 0.2,
             "top_p":0.1,
             "prompt": prompt,
             "suffix": suffix,
-            "echo":False,
-            "max_tokens": 1024
+            "max_tokens": 500
         }
-        self.log(prompt)
-        self.log(suffix)
-        self.log(self.API_TOKEN)
 
         headers = {
-            "accept": "application/json",
+            "Accept": "application/json",
             'Authorization': "Bearer " + self.API_TOKEN,
-            'Content-Type': 'application/json',
-            'x-client-type': 'neovim'
+            'Content-Type': 'application/json'
         }
 
-
-        self.log(3333)
         async with httpx.AsyncClient() as client:
-            global_task = asyncio.create_task(self.post_request(client, self.END_POINT,
+            self.post_task = asyncio.create_task(self.post_request(client, self.END_POINT,
                                                                 headers=headers,
-                                                                payload=json.dumps(post_json),
+                                                                payload=post_json,
                                                                 timeout=timeout_setting))
-            self.log(234)
-            # post_init()
-            # 模拟等待一段时间后取消任务（可选）
-            # await asyncio.sleep(5)
-            # if not task.done():
-            #     print("Cancelling the request...")
-            #     task.cancel()
-            while not global_task.done():
+
+            # 一直等到 post_request 结束，这三种情况会 task.done()
+            #   被 cancel 掉
+            #   请求正常返回
+            #   timeout 后终止
+            while not self.post_task.done():
                 await asyncio.sleep(0.3)
 
-            self.log(3444)
+            res = await self.post_task  # 获取任务结果（不论是正常完成还是被取消）
 
-            res = await global_task  # 获取任务结果（不论是正常完成还是被取消）
-
-            self.log("<<<<<<<<<<<<<<<<<<" + res["status"])
-
+            if res["status"] == "cancelled":
+                # cancel 异常已经在 task 内被捕捉了，这里就不用再处理了
+                return
+            
             if res["status"] == "success":
-                self.log(res["body"] + ">>>")
                 try:
                     result_obj = json.loads(res["body"])
                     result_str = result_obj["choices"][0]["text"]
@@ -155,26 +158,36 @@ class MyPlugin:
                     self.log('response.choices 格式错误: ' + res["body"])
                     return
                 result_str = result_str.replace("'", "''")
-                self.log(345678)
                 await self.cache_response_pos(lnum, col)
                 await self.response_handler(result_str)
-                # print("Request succeeded:")
-                # print(f"Status Code: {res['status_code']}")
-                # print(f"Response Body: {res['body']}")
+                self.nvim_call("copilot#loading_stop()")
             elif res["status"] == "cancelled":
                 await self.response_handler('{cancelled}')
+                self.nvim_call("copilot#loading_stop()")
                 return
             elif res["status"] == "error":
                 # 包括超时
                 await self.response_handler('{error}')
+                self.nvim_call("copilot#loading_stop()")
                 return
 
-    # 入口调用
+    # 入口调用，执行 DoComplete
     @neovim.function("DoCopilotComplete", sync=False)
     def do_complete(self, args):
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.callback_task())
-        self.nvim.async_call(self.nvim.eval, 'copilot#loading_start()')
+        if self.rate_limiter.is_allowed():
+            self.nvim_call("copilot#loading_start()")
+            loop = asyncio.get_event_loop()
+            loop.create_task(self.callback_task())
+        else:
+            self.nvim_call("copilot#loading_stop()")
+        pass
+
+    # cancel POST
+    @neovim.function("CancelCopilotComplete", sync=True)
+    def cancel_complete(self, args):
+        if not self.post_task.done():
+            self.post_task.cancel()
+
 
     async def callback_task(self):
         await self.completions_request_async()

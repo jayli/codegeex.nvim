@@ -412,7 +412,12 @@ function! s:fire()
   let g:copilot_global_suffix = copilot#get_suffix()
   let g:copilot_global_context = copilot#context()
   " py3 Util.do_complete()
-  call DoCopilotComplete()
+  try
+    call DoCopilotComplete()
+  catch /117/
+    silent! noa UpdateRemotePlugins
+    call DoCopilotComplete()
+  endtry
 endfunction
 
 function! s:not_insert_mode()
@@ -543,6 +548,13 @@ endfunction
 
 function! s:flush()
   call s:loading_stop()
+  try
+    call CancelCopilotComplete()
+  catch /117/
+    silent! noa UpdateRemotePlugins
+    call CancelCopilotComplete()
+  endtry
+
   if exists("s:copilot_hint_snippet") && empty(s:copilot_hint_snippet)
     return
   endif
