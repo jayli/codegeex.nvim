@@ -156,6 +156,7 @@ class MyPlugin:
                     result_str = result_obj["choices"][0]["text"]
                 except KeyError:
                     self.log('response.choices 格式错误: ' + res["body"])
+                    self.nvim_call("copilot#loading_stop()")
                     return
                 result_str = result_str.replace("'", "''")
                 await self.cache_response_pos(lnum, col)
