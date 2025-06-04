@@ -25,6 +25,7 @@ vim.g.deepseek_apikey = "{你的 deepseek apikey}"
 
 ```bash
 pip install httpx
+pip install neovim
 ```
 
 #### 二）获得 deepseek apikey
