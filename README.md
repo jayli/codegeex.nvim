@@ -43,9 +43,11 @@ pip install neovim
 可选配置：
 
 ```
-vim.g.deepseek_base_url = "{your deepseek base url}" -- 默认是 https://api.deepseek.com/v1
+vim.g.deepseek_base_url = "{your deepseek base url}" -- 默认是 https://api.deepseek.com/beta
 vim.g.deepseek_timeout = 10     -- 默认是 10
 ```
+
+`deepseek_base_url`后会拼接`/completions`。所选模型必须支持`deepseek-coder`模型。
 
 #### 四）注意
 
