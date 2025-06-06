@@ -155,7 +155,7 @@ class MyPlugin:
                     result_obj = json.loads(res["body"])
                     result_str = result_obj["choices"][0]["text"]
                 except KeyError:
-                    self.log('response.choices 格式错误: ' + res["body"])
+                    self.log('response.choices Format error: ' + res["body"])
                     self.nvim_call("copilot#loading_stop()")
                     return
                 result_str = result_str.replace("'", "''")
@@ -168,6 +168,7 @@ class MyPlugin:
                 return
             elif res["status"] == "error":
                 # 包括超时
+                self.log(res)
                 await self.response_handler('{error}')
                 self.nvim_call("copilot#loading_stop()")
                 return
