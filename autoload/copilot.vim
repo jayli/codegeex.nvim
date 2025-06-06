@@ -12,6 +12,8 @@ let g:copilot_global_response_pos = {}
 let g:copilot_req_queue = []
 let g:copilot_suggest_timer = 0
 let g:copilot_just_after_insert = 0
+" 当前行前后各不超过 500 行
+let s:lines_limit = 500
 
 function! copilot#cmp_visible()
   if s:installed_cmp_plugin() != "cmp" | return v:false | endif
@@ -51,8 +53,13 @@ function! copilot#init()
 endfunction
 
 function! copilot#get_prompt()
+  let curr_len = line('.')
   if line('.') > 1
-    let lines = getline(1, line('.') - 1)
+    let start_line = 1
+    if curr_len > s:lines_limit
+      let start_line = curr_len - s:lines_limit
+    endif
+    let lines = getline(start_line, curr_line - 1)
     let line_str = join(lines, "\\n") . "\\n"
   else
     let line_str = ""
@@ -63,16 +70,21 @@ function! copilot#get_prompt()
   else
     let curr_prefix = strpart(curr_line, 0, col('.'))
   endif
-
   let prefix = line_str . curr_prefix
   return prefix
 endfunction
 
 function! copilot#get_suffix()
-  let all_lines_count = len(getline(1, '$'))
+  let curr_len = line('.')
+  let all_lines_count = line("$") " len(getline(1, '$'))
   let curr_suffix = strpart(getline('.'), col('.'))
-  if line('.') < all_lines_count
-    let lines = getline(line('.') + 1, '$')
+  if curr_line < all_lines_count
+    let start_line = curr_line + 1
+    let end_line = all_lines_count
+    if all_lines_count - start_line > s:lines_limit
+      let end_line = start_line + s:lines_limit - 1
+    endif
+    let lines = getline(start_line, end_line)
     let suffix = curr_suffix . "\\n" . join(lines, "\\n")
   else
     let suffix = curr_suffix
