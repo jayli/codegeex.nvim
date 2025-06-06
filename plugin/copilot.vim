@@ -19,6 +19,10 @@ if !exists("g:deepseek_timeout")
   let g:deepseek_timeout = 5
 endif
 
+if !exists("g:deepseek_lines_limit")
+  let g:deepseek_lines_limit = 500
+endif
+
 if empty(g:deepseek_base_url)
   let g:deepseek_base_url = "https://api.deepseek.com/beta"
 endif

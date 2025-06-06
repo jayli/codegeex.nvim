@@ -13,7 +13,7 @@ let g:copilot_req_queue = []
 let g:copilot_suggest_timer = 0
 let g:copilot_just_after_insert = 0
 " 当前行前后各不超过 500 行
-let s:lines_limit = 500
+let s:lines_limit = g:deepseek_lines_limit
 
 function! copilot#cmp_visible()
   if s:installed_cmp_plugin() != "cmp" | return v:false | endif
@@ -53,11 +53,11 @@ function! copilot#init()
 endfunction
 
 function! copilot#get_prompt()
-  let curr_len = line('.')
+  let curr_line = line('.')
   if line('.') > 1
     let start_line = 1
-    if curr_len > s:lines_limit
-      let start_line = curr_len - s:lines_limit
+    if curr_line > s:lines_limit
+      let start_line = curr_line - s:lines_limit
     endif
     let lines = getline(start_line, curr_line - 1)
     let line_str = join(lines, "\\n") . "\\n"
@@ -75,7 +75,7 @@ function! copilot#get_prompt()
 endfunction
 
 function! copilot#get_suffix()
-  let curr_len = line('.')
+  let curr_line = line('.')
   let all_lines_count = line("$") " len(getline(1, '$'))
   let curr_suffix = strpart(getline('.'), col('.'))
   if curr_line < all_lines_count
