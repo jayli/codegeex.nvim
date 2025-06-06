@@ -36,6 +36,9 @@ class MyPlugin:
         self.API_TOKEN = nvim.eval("g:deepseek_apikey")
         self.FILE_NAME = nvim.eval("expand('%:p')")
         self.TIME_OUT = nvim.eval("g:deepseek_timeout")
+        self.MODEL = nvim.eval("g:deepseek_model")
+        # deepseek, qwen
+        self.LLM = nvim.eval("g:deepseek_llm")
         self.reset_post_task()
         # 5 秒内少于 10 次请求
         self.rate_limiter = RateLimiter(9, 5)
@@ -54,8 +57,7 @@ class MyPlugin:
         try:
             # 发起POST请求
             response = await client.post(url, headers=headers, json=payload, timeout=timeout)
-            #print(f"Response status: {response.status_code}")
-            #print(f"Response body: {response.text}")
+            self.log(response.text)
             return {
                 "status": "success",
                 "status_code": response.status_code,
@@ -68,6 +70,7 @@ class MyPlugin:
             }
         except Exception as e:
             # 捕获其他异常，例如超时、网络错误等
+            self.log(e)
             return {
                 "status": "error",
                 "message": str(e)
@@ -108,13 +111,9 @@ class MyPlugin:
         await self.get_completions(file_path, prompt, suffix, lnum, col, lang)
         pass
 
-    async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
-        # prompt 就是 prefix
-        timeout_setting = self.TIME_OUT
-        url = "https://www.baidu.com"
-
+    def get_deepseek_payload(self, prompt, suffix):
         post_json = {
-            "model": "deepseek-coder",
+            "model": self.MODEL,
             "request_id": int(time.time()),
             "echo":False,
             "stream": False,
@@ -124,7 +123,35 @@ class MyPlugin:
             "suffix": suffix,
             "max_tokens": 500
         }
+        return post_json
 
+    def get_qwen_payload(self, prompt, suffix):
+        prompt_esc = prompt #.replace('"', '\\"')
+        suffix_esc = suffix #.replace('"', '\\"')
+        post_json = {
+            "model": self.MODEL,
+            # "prompt":"<|fim_prefix|>写一个python的快速排序函数，def quick_sort(arr):<|fim_suffix|>"
+            "prompt":f"<|fim_prefix|>{prompt_esc}<|fim_suffix|>{suffix_esc}<|fim_middle|>",
+            "request_id": int(time.time()),
+            "stream": False,
+            "temperature": 0.2,
+            "top_p":0.1,
+        }
+        return post_json
+
+    async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
+        # prompt 就是 prefix
+        timeout_setting = self.TIME_OUT
+        url = "https://www.baidu.com"
+
+        if self.LLM == "deepseek":
+            post_json = self.get_deepseek_payload(prompt, suffix)
+        elif self.LLM == "qwen":
+            post_json = self.get_qwen_payload(prompt, suffix)
+        else:
+            self.nvim_call("copilot#loading_stop()")
+            return
+        
         headers = {
             "Accept": "application/json",
             'Authorization': "Bearer " + self.API_TOKEN,
@@ -158,6 +185,9 @@ class MyPlugin:
                     self.log('response.choices Format error: ' + res["body"])
                     self.nvim_call("copilot#loading_stop()")
                     return
+                if self.LLM == "qwen":
+                    result_str = result_str.lstrip('\n')
+                    result_str = result_str.replace("\n", "\\n")
                 result_str = result_str.replace("'", "''")
                 await self.cache_response_pos(lnum, col)
                 await self.response_handler(result_str)
@@ -168,7 +198,6 @@ class MyPlugin:
                 return
             elif res["status"] == "error":
                 # 包括超时
-                self.log(res)
                 await self.response_handler('{error}')
                 self.nvim_call("copilot#loading_stop()")
                 return

@@ -46,9 +46,11 @@ pip install neovim
 vim.g.deepseek_base_url = "{your deepseek base url}" -- 默认是 https://api.deepseek.com/beta
 vim.g.deepseek_timeout = 10     -- 默认是 10
 vim.g.deepseek_lines_limit = 500 -- 当前行前后行数限制
+vim.g.deepseek_model = "deepseek_model" -- 选择你的model名称
+vim.g.deepseek_llm = "deepseek" -- 选择你的模型引擎
 ```
 
-`deepseek_base_url`后会拼接`/completions`。所选模型必须支持`deepseek-coder`模型。
+`deepseek_base_url`后会拼接`/completions`。deepseek 模型默认支持的是`deepseek-coder`。
 
 #### 四）注意
 

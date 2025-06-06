@@ -23,6 +23,14 @@ if !exists("g:deepseek_lines_limit")
   let g:deepseek_lines_limit = 500
 endif
 
+if !exists("g:deepseek_model")
+  let g:deepseek_model = "deepseek-coder"
+endif
+
+if !exists("g:deepseek_llm")
+  let g:deepseek_llm = "deepseek" " deepseek, qwen
+endif
+
 if empty(g:deepseek_base_url)
   let g:deepseek_base_url = "https://api.deepseek.com/beta"
 endif
