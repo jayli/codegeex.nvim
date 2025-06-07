@@ -28,7 +28,7 @@ pip install httpx
 pip install neovim
 ```
 
-#### 二） 填写 APIKey
+#### 二） 获得 APIKey
 
 ##### 1) 获得 deepseek apikey
 
@@ -48,14 +48,25 @@ api key 赋值给 `vim.g.copilot_apikey`。
 
 插入模式下，正常输入时会自动联想，联想完成后敲 Tab 键完成补全，因为对 Tab 键有强绑定，所以也做了对一些常用补全插件的兼容（[coc](https://github.com/neoclide/coc.nvim)、[nvim-cmp](https://github.com/hrsh7th/nvim-cmp) 和 [vim-easycomplete](https://github.com/jayli/vim-easycomplete)）。
 
-可选配置：
+1) Deepseek 配置
 
 ```
-vim.g.copilot_base_url = "{your llm base url}" -- 默认是 https://api.deepseek.com/beta
+vim.g.copilot_base_url = "https://api.deepseek.com/beta" -- 默认是 https://api.deepseek.com/beta
 vim.g.copilot_timeout = 10     -- 默认是 10
 vim.g.copilot_lines_limit = 500 -- 当前行前后行数限制，默认 500
 vim.g.copilot_model = "deepseek-coder" -- 选择你的model名称，默认deepseek-coder
 vim.g.copilot_llm = "deepseek" -- 选择你的模型引擎，默认 deepseek，千问：qwen
+```
+
+2) Qwen 配置
+
+```
+vim.g.copilot_apikey = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+vim.g.copilot_timeout = 10     -- 默认是 10
+vim.g.copilot_lines_limit = 500 -- 当前行前后行数限制，默认 500
+vim.g.copilot_base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+vim.g.copilot_model = "qwen2.5-coder-7b-instruct"
+vim.g.copilot_llm = "qwen"
 ```
 
 `copilot_base_url`后会拼接`/completions`。deepseek 模型默认支持的是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。
