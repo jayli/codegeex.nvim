@@ -12,14 +12,16 @@ https://github.com/user-attachments/assets/1065a9f3-213c-4fd6-829e-78021926d42b
 
 1）配置 init.lua
 
-基于 Packer.nvim 安装：
+基于 Packer.nvim 最简单的配置：
 
 ```lua
 use { 'jayli/copilot.nvim' }
-vim.g.copilot_apikey = "{你的 deepseek 或 qwen 的 apikey}"
+vim.g.copilot_apikey = "{你的 deepseek 的 apikey}"
 ```
 
 执行`:PackerInstall`
+
+> 默认支持的是 deepseek 官网的模型，去[deepseek官网](https://platform.deepseek.com/api_keys)获取到 api key 即可。
 
 2）安装 python 依赖
 
@@ -28,7 +30,7 @@ pip install httpx
 pip install neovim
 ```
 
-#### 二） 获得 APIKey
+#### 二） Deepseek 和 Qwen 获得 APIKey
 
 ##### 1) 获得 deepseek apikey
 
@@ -38,7 +40,7 @@ pip install neovim
 
 <img src="https://github.com/user-attachments/assets/3333d2c8-5156-43f9-89db-006e186d73fc" width=500 />
 
-##### 2) 获得 qwen APIKey
+##### 2) 获得 Qwen APIKey
 
 登录阿里云后，参照这里获得 APIkey：<https://bailian.console.aliyun.com/?tab=api#/api/?type=model>
 
@@ -48,9 +50,11 @@ api key 赋值给 `vim.g.copilot_apikey`。
 
 插入模式下，正常输入时会自动联想，联想完成后敲 Tab 键完成补全，因为对 Tab 键有强绑定，所以也做了对一些常用补全插件的兼容（[coc](https://github.com/neoclide/coc.nvim)、[nvim-cmp](https://github.com/hrsh7th/nvim-cmp) 和 [vim-easycomplete](https://github.com/jayli/vim-easycomplete)）。
 
-1) Deepseek 配置
+1) Deepseek 完整配置
 
-```
+```lua
+use { 'jayli/copilot.nvim' }
+vim.g.copilot_apikey = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
 vim.g.copilot_base_url = "https://api.deepseek.com/beta" -- 默认是 https://api.deepseek.com/beta
 vim.g.copilot_timeout = 10     -- 默认是 10
 vim.g.copilot_lines_limit = 500 -- 当前行前后行数限制，默认 500
@@ -58,9 +62,10 @@ vim.g.copilot_model = "deepseek-coder" -- 选择你的model名称，默认deepse
 vim.g.copilot_llm = "deepseek" -- 选择你的模型引擎，默认 deepseek，千问：qwen
 ```
 
-2) Qwen 配置
+2) Qwen 完整配置
 
-```
+```lua
+use { 'jayli/copilot.nvim' }
 vim.g.copilot_apikey = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
 vim.g.copilot_timeout = 10     -- 默认是 10
 vim.g.copilot_lines_limit = 500 -- 当前行前后行数限制，默认 500
@@ -69,7 +74,7 @@ vim.g.copilot_model = "qwen2.5-coder-7b-instruct"
 vim.g.copilot_llm = "qwen"
 ```
 
-`copilot_base_url`后会拼接`/completions`。deepseek 模型默认支持的是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。
+`copilot_base_url`后会拼接`/completions`。deepseek 默认支持的AI补全的模型是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。
 
 #### 四）注意
 
