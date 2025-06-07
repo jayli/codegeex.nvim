@@ -32,13 +32,13 @@ class MyPlugin:
     def __init__(self, nvim):
         self.nvim = nvim
         self.post_task = None
-        self.END_POINT = nvim.eval("g:deepseek_base_url") + "/completions"
-        self.API_TOKEN = nvim.eval("g:deepseek_apikey")
+        self.END_POINT = nvim.eval("g:copilot_base_url") + "/completions"
+        self.API_TOKEN = nvim.eval("g:copilot_apikey")
         self.FILE_NAME = nvim.eval("expand('%:p')")
-        self.TIME_OUT = nvim.eval("g:deepseek_timeout")
-        self.MODEL = nvim.eval("g:deepseek_model")
+        self.TIME_OUT = nvim.eval("g:copilot_timeout")
+        self.MODEL = nvim.eval("g:copilot_model")
         # deepseek, qwen
-        self.LLM = nvim.eval("g:deepseek_llm")
+        self.LLM = nvim.eval("g:copilot_llm")
         self.reset_post_task()
         # 5 秒内少于 10 次请求
         self.rate_limiter = RateLimiter(9, 5)

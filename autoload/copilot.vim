@@ -1,4 +1,4 @@
-" Deepseek Copilot for NeoVim
+" Copilot plugin for NeoVim
 " Author by @bachi
 let s:copilot_toolkit = has('nvim') ? v:lua.require("copilot") : v:null
 let b:tabnine_typing_type = ""
@@ -13,7 +13,7 @@ let g:copilot_req_queue = []
 let g:copilot_suggest_timer = 0
 let g:copilot_just_after_insert = 0
 " 当前行前后各不超过 500 行
-let s:lines_limit = g:deepseek_lines_limit
+let s:lines_limit = g:copilot_lines_limit
 
 function! copilot#cmp_visible()
   if s:installed_cmp_plugin() != "cmp" | return v:false | endif
@@ -254,7 +254,7 @@ endfunction
 
 " 主要判断哪些情况不要触发
 function! s:ready()
-  if !exists("g:deepseek_apikey") || empty(g:deepseek_apikey)
+  if !exists("g:copilot_apikey") || empty(g:copilot_apikey)
     return v:false
   endif
   if &filetype == "none" || &buftype == "nofile" || &buftype == "terminal"
@@ -688,7 +688,7 @@ endfunction
 
 function! copilot#regist_rplugin()
   let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
-  if &runtimepath =~ 'deepseek-coder.nvim'
+  if &runtimepath =~ 'copilot.nvim'
   else
     exec "set runtimepath+=" . s:plugin_root
     silent! noa UpdateRemotePlugins

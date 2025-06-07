@@ -7,40 +7,40 @@ if !has('python3')
   finish
 endif
 
-if !exists("g:deepseek_apikey")
-  let g:deepseek_apikey = ""
+if !exists("g:copilot_apikey")
+  let g:copilot_apikey = ""
 endif
 
-if !exists("g:deepseek_base_url")
-  let g:deepseek_base_url = ""
+if !exists("g:copilot_base_url")
+  let g:copilot_base_url = ""
 endif
 
-if !exists("g:deepseek_timeout")
-  let g:deepseek_timeout = 5
+if !exists("g:copilot_timeout")
+  let g:copilot_timeout = 5
 endif
 
-if !exists("g:deepseek_lines_limit")
-  let g:deepseek_lines_limit = 500
+if !exists("g:copilot_lines_limit")
+  let g:copilot_lines_limit = 500
 endif
 
-if !exists("g:deepseek_model")
-  let g:deepseek_model = "deepseek-coder"
+if !exists("g:copilot_model")
+  let g:copilot_model = "deepseek-coder"
 endif
 
-if !exists("g:deepseek_llm")
-  let g:deepseek_llm = "deepseek" " deepseek, qwen
+if !exists("g:copilot_llm")
+  let g:copilot_llm = "copilot" " deepseek, qwen
 endif
 
-if empty(g:deepseek_base_url)
-  let g:deepseek_base_url = "https://api.deepseek.com/beta"
+if empty(g:copilot_base_url)
+  let g:copilot_base_url = "https://api.deepseek.com/beta"
 endif
 
-if empty(g:deepseek_apikey)
+if empty(g:copilot_apikey)
   finish
 endif
 
 let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
-if &runtimepath =~ 'deepseek-coder.nvim'
+if &runtimepath =~ 'copilot.nvim'
 else
   exec "set runtimepath+=" . s:plugin_root
   silent! noa UpdateRemotePlugins
@@ -50,7 +50,7 @@ call timer_start(10, { -> copilot#regist_rplugin()})
 
 let g:copilot_ready = v:true
 if has('vim_starting')
-  augroup deepseek_copilot
+  augroup copilot-coder
     autocmd!
     autocmd BufReadPost,BufNewFile * call copilot#init()
     autocmd TextChangedI * call copilot#text_changed_i()
