@@ -70,7 +70,7 @@ class MyPlugin:
             }
         except Exception as e:
             # 捕获其他异常，例如超时、网络错误等
-            self.log(e)
+            self.log('Error:' + str(e))
             return {
                 "status": "error",
                 "message": str(e)
