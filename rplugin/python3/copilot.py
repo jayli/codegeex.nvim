@@ -57,7 +57,7 @@ class MyPlugin:
         try:
             # 发起POST请求
             response = await client.post(url, headers=headers, json=payload, timeout=timeout)
-            self.log(response.text)
+            # self.log('1' + response.text)
             return {
                 "status": "success",
                 "status_code": response.status_code,
@@ -121,7 +121,7 @@ class MyPlugin:
             "top_p":0.1,
             "prompt": prompt,
             "suffix": suffix,
-            "max_tokens": 500
+            "max_tokens": 128
         }
         return post_json
 
@@ -134,8 +134,8 @@ class MyPlugin:
             "prompt":f"<|fim_prefix|>{prompt_esc}<|fim_suffix|>{suffix_esc}<|fim_middle|>",
             "request_id": int(time.time()),
             "stream": False,
-            "temperature": 0.2,
-            "top_p":0.1,
+            "temperature": 0.1,
+            "top_p":0.1
         }
         return post_json
 
