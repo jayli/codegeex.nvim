@@ -131,7 +131,8 @@ class MyPlugin:
         suffix_esc = suffix # .replace('"', '\\"')
         post_json = {
             "model": self.MODEL,
-            "prompt":f"<|fim_prefix|>{prompt_esc}<|fim_suffix|>{suffix_esc}<|fim_middle|>"
+            "prompt":f"<|fim_prefix|>{prompt_esc}<|fim_suffix|>{suffix_esc}<|fim_middle|>",
+            "top_p":0.1
         }
         # "request_id": int(time.time()),
         # "stream": False,
