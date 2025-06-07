@@ -56,8 +56,9 @@ class MyPlugin:
     async def post_request(self, client, url, headers, payload, timeout):
         try:
             # 发起POST请求
+            # self.log('1' + url + str(headers) + str(payload))
             response = await client.post(url, headers=headers, json=payload, timeout=timeout)
-            # self.log('1' + response.text)
+            # self.log('2' + response.text)
             return {
                 "status": "success",
                 "status_code": response.status_code,
@@ -126,17 +127,16 @@ class MyPlugin:
         return post_json
 
     def get_qwen_payload(self, prompt, suffix):
-        prompt_esc = prompt #.replace('"', '\\"')
-        suffix_esc = suffix #.replace('"', '\\"')
+        prompt_esc = prompt # .replace('"', '\\"')
+        suffix_esc = suffix # .replace('"', '\\"')
         post_json = {
             "model": self.MODEL,
-            # "prompt":"<|fim_prefix|>写一个python的快速排序函数，def quick_sort(arr):<|fim_suffix|>"
-            "prompt":f"<|fim_prefix|>{prompt_esc}<|fim_suffix|>{suffix_esc}<|fim_middle|>",
-            "request_id": int(time.time()),
-            "stream": False,
-            "temperature": 0.1,
-            "top_p":0.1
+            "prompt":f"<|fim_prefix|>{prompt_esc}<|fim_suffix|>{suffix_esc}<|fim_middle|>"
         }
+        # "request_id": int(time.time()),
+        # "stream": False,
+        # "temperature": 0.1,
+        # "top_p":0.1,
         return post_json
 
     async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
