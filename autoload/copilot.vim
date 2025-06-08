@@ -127,9 +127,6 @@ function! copilot#complete_done()
   if !s:ready()
     return
   endif
-  " if !s:isbacking()
-  "   call s:lazy_fire(200)
-  " endif
 endfunction
 
 function! s:lazy_fire(delay)
@@ -144,6 +141,13 @@ function! s:lazy_fire(delay)
     let g:copilot_suggest_timer = 0
   endif
   let g:copilot_suggest_timer = timer_start(a:delay, { -> s:fire() })
+endfunction
+
+function! s:stop_lazy_fire()
+  if g:copilot_suggest_timer > 0
+    call timer_stop(g:copilot_suggest_timer)
+    let g:copilot_suggest_timer = 0
+  endif
 endfunction
 
 function! copilot#tab_action()
@@ -226,7 +230,6 @@ endfunction
 
 function! copilot#text_changed_i()
   if !s:ready() | return | endif
-  call s:flush()
   if !exists('b:copilot_backing')
     let b:copilot_backing = 0
   endif
@@ -236,20 +239,41 @@ function! copilot#text_changed_i()
     let b:copilot_backing = 0
   endif
   " call s:console('text_changed_i', s:isbacking() ? "<-" : "->")
+
   if !s:isbacking()
+
+    " 先针对当前已有的 ghost txt 做处理
+    
+    " if !empty(s:copilot_hint_snippet)
+      " call s:console('补充ghost text')
+      " let l:char = strpart(getline('.'), col('.') - 2, 1)
+      " let ghost_text_first_char = strpart(s:copilot_hint_snippet[0], 0, 1)
+      " if ghost_text_first_char == l:char
+      "   if strlen(s:copilot_hint_snippet[0]) >= 2
+      "     let new_ghost_text_first_line = strpart(s:copilot_hint_snippet[0], 1, 100)
+      "     let new_ghost_text_array = [new_ghost_text_first_line] + s:copilot_hint_snippet[1:]
+      "     call s:console('补充ghost text')
+      "     call s:show_hint(new_ghost_text_array)
+      "     call s:stop_lazy_fire()
+      "   else
+      "     call s:flush()
+      "     call s:lazy_fire(700)
+      "   endif
+      " else
+      "   call s:lazy_fire(700)
+      " endif
+    " else
+      " call s:console("正常fire")
+      " call s:flush()
+    " endif
     call s:lazy_fire(700)
+  else
+    call s:flush()
+    call s:stop_lazy_fire()
   endif
 endfunction
 
 function! copilot#cursor_hold_i()
-  if !s:ready()
-    return
-  endif
-  if s:isbacking()
-    " do nothting
-  else
-    " call s:lazy_fire(700)
-  endif
 endfunction
 
 " 主要判断哪些情况不要触发
