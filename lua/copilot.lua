@@ -128,12 +128,13 @@ M.setup = function(custom_config)
   -- merging is deferred until ensure_config
   new_user_config = merge_config({
       apikey = "",
-      base_url = ""
+      base_url = "old"
     },{
-
+      apikey = "xxxxxxxxxxnew "
     })
   if vim.v.vim_did_enter == 0 then
-    -- print(1234)
+    -- print(new_user_config.apikey)
+    -- print(new_user_config.base_url)
     -- print(vim.fn.argv(0))
   end
 end
