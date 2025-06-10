@@ -41,7 +41,7 @@ function M.init()
 end
 
 -- code_block 是一个字符串，有可能包含回车符
--- call v:lua.require("copilot").show_hint()
+-- call v:lua.require("co-copilot").show_hint()
 -- code_block 是数组类型
 function M.show_hint(code_block)
   local lines = {}

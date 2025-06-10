@@ -1,6 +1,6 @@
 " Copilot plugin for NeoVim
 " Author by @bachi
-let s:copilot_toolkit = has('nvim') ? v:lua.require("copilot") : v:null
+let s:copilot_toolkit = has('nvim') ? v:lua.require("co-copilot") : v:null
 let b:tabnine_typing_type = ""
 let s:copilot_hint_snippet = []
 " 当前敲入的字符所属的 ctx，主要用来判断光标前进还是后退
@@ -45,7 +45,7 @@ function! copilot#init()
   if !has('nvim')
     return v:false
   endif
-  call v:lua.require("copilot").init()
+  call v:lua.require("co-copilot").init()
   " py3 import copilot.copilot
   let b:typing_ctx = s:context()
   if !s:ready() | return | endif
