@@ -1,6 +1,6 @@
 local M = {}
 local copilot_ns = vim.api.nvim_create_namespace('copilot_ns')
-local loading = require "loading"
+local loading = require "co-loading"
 
 function M.foo()
   -- print("test")

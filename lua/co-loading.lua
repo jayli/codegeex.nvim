@@ -103,6 +103,7 @@ function M.statusline_start_loading()
   end)
 end
 
+
 -- 停止 loading：恢复原始状态栏
 function M.statusline_stop_loading()
   if not loading_timer then return end
