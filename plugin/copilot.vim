@@ -39,12 +39,12 @@ if empty(g:copilot_apikey)
   finish
 endif
 
-let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
-if &runtimepath =~ 'copilot.nvim'
-else
-  exec "set runtimepath+=" . s:plugin_root
-  silent! noa UpdateRemotePlugins
-endif
+" let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
+" if &runtimepath =~ 'copilot.nvim'
+" else
+"   exec "set runtimepath+=" . s:plugin_root
+"   silent! noa UpdateRemotePlugins
+" endif
 
 call timer_start(10, { -> copilot#regist_rplugin()})
 
