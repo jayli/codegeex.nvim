@@ -52,6 +52,26 @@ function! copilot#init()
   call timer_start(900, { -> s:bind_event_once()})
 endfunction
 
+function! s:check_single_enter()
+  let l:enter = ''
+  " 获取当前光标所在的行号
+  let l:current_line_number = line(".")
+  if l:current_line_number == 1 | return "" | endif
+  " 获取当前行的内容
+  let l:current_line_content = getline(l:current_line_number)
+  let l:above_line_content = getline(l:current_line_number - 1)
+  " 比较当前行内容和上次记录的行内容
+  if l:current_line_content =~# '^\s*$' && l:above_line_content !~# '^\s*$'
+    " 如果当前行为空且上次的行不是空，则可能是因为按了回车
+    let l:enter = 'single'
+  elseif l:current_line_content =~# '^\s*$' && l:above_line_content =~# '^\s*$'
+    let l:enter = 'double'
+  endif
+  " 更新上次的行内容
+  let s:last_line_content = l:current_line_content
+  return l:enter
+endfunction
+
 function! copilot#get_prompt()
   let curr_line = line('.')
   if line('.') > 1
@@ -240,36 +260,23 @@ function! copilot#text_changed_i()
   endif
   " call s:console('text_changed_i', s:isbacking() ? "<-" : "->")
 
-  if !s:isbacking()
-
-    " 先针对当前已有的 ghost txt 做处理
-    
-    " if !empty(s:copilot_hint_snippet)
-      " call s:console('补充ghost text')
-      " let l:char = strpart(getline('.'), col('.') - 2, 1)
-      " let ghost_text_first_char = strpart(s:copilot_hint_snippet[0], 0, 1)
-      " if ghost_text_first_char == l:char
-      "   if strlen(s:copilot_hint_snippet[0]) >= 2
-      "     let new_ghost_text_first_line = strpart(s:copilot_hint_snippet[0], 1, 100)
-      "     let new_ghost_text_array = [new_ghost_text_first_line] + s:copilot_hint_snippet[1:]
-      "     call s:console('补充ghost text')
-      "     call s:show_hint(new_ghost_text_array)
-      "     call s:stop_lazy_fire()
-      "   else
-      "     call s:flush()
-      "     call s:lazy_fire(700)
-      "   endif
-      " else
-      "   call s:lazy_fire(700)
-      " endif
-    " else
-      " call s:console("正常fire")
-      " call s:flush()
-    " endif
-    call s:lazy_fire(700)
-  else
+  if s:isbacking()
     call s:flush()
     call s:stop_lazy_fire()
+    return
+  endif
+  let l:enter = s:check_single_enter()
+
+  if l:enter == "double" "连续回车
+    call s:flush()
+    call s:stop_lazy_fire()
+    return
+  endif
+
+  if l:enter == "single" " 单回车
+    call s:lazy_fire(700)
+  elseif l:enter == ""  " 没有回车，正常输入
+    call s:lazy_fire(700)
   endif
 endfunction
 
@@ -300,6 +307,7 @@ endfunction
 function! copilot#insert_enter()
   if !s:ready() | return | endif
   call s:flush()
+  let g:copilot_just_after_insert = 1
 endfunction
 
 function! copilot#complete_changed()
