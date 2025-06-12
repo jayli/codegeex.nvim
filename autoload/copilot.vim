@@ -532,6 +532,10 @@ function! copilot#callback(res_str)
     " 权限校验失败
     call s:flush()
     return
+  elseif a:res_str == "{cancelled}"
+    " 被取消
+    call s:flush()
+    return
   endif
   " 如果请求copilot服务器时光标所在位置和snippet返回时光标位置不相同，则丢弃
   if !s:same_pos()

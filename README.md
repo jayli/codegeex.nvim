@@ -56,7 +56,7 @@ api key 赋值给 `vim.g.copilot_apikey`。
 use { 'jayli/copilot.nvim' }
 vim.g.copilot_apikey = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
 vim.g.copilot_base_url = "https://api.deepseek.com/beta" -- 默认是 https://api.deepseek.com/beta
-vim.g.copilot_timeout = 10     -- 默认是 10
+vim.g.copilot_timeout = 5     -- 默认是 5
 vim.g.copilot_lines_limit = 500 -- 当前行前后行数限制，默认 500
 vim.g.copilot_model = "deepseek-coder" -- 选择你的model名称，默认deepseek-coder
 vim.g.copilot_llm = "deepseek" -- 选择你的模型引擎，默认 deepseek，千问：qwen
@@ -67,14 +67,25 @@ vim.g.copilot_llm = "deepseek" -- 选择你的模型引擎，默认 deepseek，�
 ```lua
 use { 'jayli/copilot.nvim' }
 vim.g.copilot_apikey = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-vim.g.copilot_timeout = 10     -- 默认是 10
+vim.g.copilot_timeout = 5     -- 默认是 5
 vim.g.copilot_lines_limit = 500 -- 当前行前后行数限制，默认 500
 vim.g.copilot_base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 vim.g.copilot_model = "qwen2.5-coder-7b-instruct"
 vim.g.copilot_llm = "qwen"
 ```
 
-`copilot_base_url`后会拼接`/completions`。deepseek 默认支持的AI补全的模型是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。
+3) Aone Copilot 完整配置
+
+```lua
+use { 'jayli/copilot.nvim' }
+vim.g.copilot_apikey = "xxxxxxxxxxxxxxxxxxxxxxxx"
+vim.g.copilot_base_url = "https://xxxxxxxxxxxxx"
+vim.g.copilot_llm = "aone"
+```
+
+获得 apikey 和 base url，ATA 里搜一下。
+
+`copilot_base_url`后会拼接`/completions`。deepseek 默认支持的AI补全的模型是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。Aone Copilot 留空即可。
 
 #### 四）注意
 
@@ -86,4 +97,4 @@ deepseek 有时速度较慢，你可以自己更换 deepseek 模型引擎，修�
 
 Github Copilot 和 TabNine 都很好，但 Github Copilot太慢，TabNine 太贵。国内能用的模型有一些代理后的 GPT4 速度还行，还有两个专用于代码补全的 DeepSeek-Code ，qwen 和 CodeGeex4。综合用下来效果好的是 deepseek 和 qwen。
 
-如果是阿里内网用户，那果断使用灵码或者 Aone Copilot，速度和效果都超过 deepseek 和 qwen，我也实现了 Aone Copilot 的 nvim 插件，ata 上搜一下。
+如果是阿里内网用户，那果断使用灵码或者 Aone Copilot，速度和效果都超过 deepseek 和 qwen。

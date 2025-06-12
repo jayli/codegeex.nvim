@@ -32,7 +32,8 @@ class MyPlugin:
     def __init__(self, nvim):
         self.nvim = nvim
         self.post_task = None
-        self.END_POINT = nvim.eval("g:copilot_base_url") + "/completions"
+        self.BASE_URL = nvim.eval("g:copilot_base_url")
+        self.END_POINT = self.BASE_URL + "/completions"
         self.API_TOKEN = nvim.eval("g:copilot_apikey")
         self.FILE_NAME = nvim.eval("expand('%:p')")
         self.TIME_OUT = nvim.eval("g:copilot_timeout")
@@ -56,7 +57,7 @@ class MyPlugin:
     async def post_request(self, client, url, headers, payload, timeout):
         try:
             # 发起POST请求
-            # self.log('1' + url + str(headers) + str(payload))
+            # self.log('1' + url + str(headers) + str(payload) + str(timeout))
             response = await client.post(url, headers=headers, json=payload, timeout=timeout)
             # self.log('2' + response.text)
             return {
@@ -69,8 +70,12 @@ class MyPlugin:
             return {
                 "status": "cancelled"
             }
+        except httpx.TimeoutException:
+            return {
+                "status": "timeout"
+            }
         except Exception as e:
-            # 捕获其他异常，例如超时、网络错误等
+            # 捕获其他异常，网络错误等
             self.log('Error:' + str(e))
             return {
                 "status": "error",
@@ -139,25 +144,47 @@ class MyPlugin:
         # "temperature": 0.1,
         # "top_p":0.1,
         return post_json
+    
+    def get_aone_layload(self, prompt, suffix):
+        post_json = {
+            "file_path": self.FILE_NAME,
+            "gen_length": 0,
+            "prompt": prompt,
+            "return_nums": 1,
+            "suffix": suffix,
+            "temperature": 0.1,
+            "top_p": 1
+        }
+        return post_json
 
     async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
         # prompt 就是 prefix
         timeout_setting = self.TIME_OUT
         url = "https://www.baidu.com"
 
-        if self.LLM == "deepseek":
-            post_json = self.get_deepseek_payload(prompt, suffix)
-        elif self.LLM == "qwen":
-            post_json = self.get_qwen_payload(prompt, suffix)
-        else:
-            self.nvim_call("copilot#loading_stop()")
-            return
-        
         headers = {
             "Accept": "application/json",
             'Authorization': "Bearer " + self.API_TOKEN,
             'Content-Type': 'application/json'
         }
+
+        if self.LLM == "deepseek":
+            post_json = self.get_deepseek_payload(prompt, suffix)
+        elif self.LLM == "qwen":
+            post_json = self.get_qwen_payload(prompt, suffix)
+        elif self.LLM == "aone":
+            self.END_POINT = self.BASE_URL + "/completion"
+            new_header = {
+                'X-Plugin-Version': "999.999.999",
+                'x-client-type': 'neovim',
+                'x-client-version': "0.9.4"
+            }
+            merged_header = {**headers, **new_header}
+            headers = merged_header
+            post_json = self.get_aone_layload(prompt, suffix)
+        else:
+            self.nvim_call("copilot#loading_stop()")
+            return
 
         async with httpx.AsyncClient() as client:
             self.post_task = asyncio.create_task(self.post_request(client, self.END_POINT,
@@ -174,34 +201,37 @@ class MyPlugin:
 
             res = await self.post_task  # 获取任务结果（不论是正常完成还是被取消）
 
-            if res["status"] == "cancelled":
-                # cancel 异常已经在 task 内被捕捉了，这里就不用再处理了
-                return
-            
-            if res["status"] == "success":
-                try:
-                    result_obj = json.loads(res["body"])
-                    result_str = result_obj["choices"][0]["text"]
-                except KeyError:
-                    self.log('response.choices Format error: ' + res["body"])
+            try:
+                if res["status"] == "timeout":
+                    await self.response_handler("{timeout}")
                     self.nvim_call("copilot#loading_stop()")
                     return
-                if self.LLM == "qwen":
-                    result_str = result_str.lstrip('\n')
-                    result_str = result_str.replace("\n", "\\n")
-                result_str = result_str.replace("'", "''")
-                await self.cache_response_pos(lnum, col)
-                await self.response_handler(result_str)
-                self.nvim_call("copilot#loading_stop()")
-            elif res["status"] == "cancelled":
-                await self.response_handler('{cancelled}')
-                self.nvim_call("copilot#loading_stop()")
-                return
-            elif res["status"] == "error":
-                # 包括超时
-                await self.response_handler('{error}')
-                self.nvim_call("copilot#loading_stop()")
-                return
+                elif res["status"] == "success":
+                    try:
+                        result_obj = json.loads(res["body"])
+                        result_str = result_obj["choices"][0]["text"]
+                    except KeyError:
+                        self.log('response.choices Format error: ' + res["body"])
+                        self.nvim_call("copilot#loading_stop()")
+                        return
+                    if self.LLM == "qwen":
+                        result_str = result_str.lstrip('\n')
+                        result_str = result_str.replace("\n", "\\n")
+                    result_str = result_str.replace("'", "''")
+                    await self.cache_response_pos(lnum, col)
+                    await self.response_handler(result_str)
+                    self.nvim_call("copilot#loading_stop()")
+                elif res["status"] == "cancelled":
+                    await self.response_handler("{cancelled}")
+                    self.nvim_call("copilot#loading_stop()")
+                    return
+                elif res["status"] == "error":
+                    # 包括超时
+                    await self.response_handler("{error}")
+                    self.nvim_call("copilot#loading_stop()")
+                    return
+            except Exception as e:
+                self.log(str(e))
 
     # 入口调用，执行 DoComplete
     @neovim.function("DoCopilotComplete", sync=False)

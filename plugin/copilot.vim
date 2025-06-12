@@ -28,7 +28,7 @@ if !exists("g:copilot_model")
 endif
 
 if !exists("g:copilot_llm")
-  let g:copilot_llm = "copilot" " deepseek, qwen
+  let g:copilot_llm = "copilot" " deepseek, qwen, aone
 endif
 
 if empty(g:copilot_base_url)
