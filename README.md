@@ -94,7 +94,7 @@ vim.g.copilot_llm = "aone"
 
 1）关于 deepseek 的速度问题
 
-deepseek 有时速度较慢，你可以自己更换 deepseek 模型引擎，修改`vim.g.copilot_base_url`的默认值为`https://api.deepseek.com/beta`，换成你自己部署 deepseek 后的 base url 即可。
+deepseek 有时速度较慢，你可以自己更换 deepseek 模型引擎，把`vim.g.copilot_base_url`换成你自己部署 deepseek 后的 base url 即可。
 
 2）编程补全的模型选择
 
