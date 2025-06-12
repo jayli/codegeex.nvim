@@ -478,8 +478,8 @@ function! s:fire()
   try
     call DoCopilotComplete()
   catch /117/
-    silent! noa UpdateRemotePlugins
-    call DoCopilotComplete()
+    " silent! noa UpdateRemotePlugins
+    " call DoCopilotComplete()
   endtry
 endfunction
 
@@ -618,7 +618,7 @@ function! s:flush()
   try
     call CancelCopilotComplete()
   catch /117/
-    silent! noa UpdateRemotePlugins
+    " silent! noa UpdateRemotePlugins
     " call CancelCopilotComplete()
   endtry
 
@@ -723,11 +723,18 @@ function! copilot#get_fgcolor(name)
 endfunction
 
 function! copilot#regist_rplugin()
-  let s:plugin_root = fnamemodify(expand('<sfile>:p'), ':h:h')
-  if &runtimepath =~ 'copilot.nvim'
-  else
-    exec "set runtimepath+=" . s:plugin_root
+  if !exists("*remote#host#PluginsForHost") | finish | endif
+  let plugins = remote#host#PluginsForHost("python3")
+  let l:installed = 0
+  for item in plugins
+    if item["path"] =~ "copilot\\.nvim"
+      let l:installed = 1
+      break
+    endif
+  endfor
+  if l:installed == 0
     silent! noa UpdateRemotePlugins
+    echom ">> 'copilot.nvim/rplugin/copilot.py' installed, Please restart your neovim."
   endif
 endfunction
 

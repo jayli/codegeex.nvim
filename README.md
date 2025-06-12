@@ -87,6 +87,9 @@ vim.g.copilot_llm = "aone"
 
 `copilot_base_url`后会拼接`/completions`。deepseek 默认支持的AI补全的模型是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。Aone Copilot 留空即可。
 
+注意：安装插件后第一次启动nvim会自动执行 `:UpdateRemotePlugins`，再重启一次 neovim 后可以正常使用了。
+
+
 #### 四）注意
 
 1）关于 deepseek 的速度问题
