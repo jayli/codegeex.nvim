@@ -60,7 +60,7 @@ function! s:check_single_enter()
   " 获取当前行的内容
   let l:current_line_content = getline(l:current_line_number)
   let l:above_line_content = getline(l:current_line_number - 1)
-  " 比较当前行内容和上次记录的行内容
+  " 比较当前行内容和上一行的行内容
   if l:current_line_content =~# '^\s*$' && l:above_line_content !~# '^\s*$'
     " 如果当前行为空且上次的行不是空，则可能是因为按了回车
     let l:enter = 'single'
@@ -308,7 +308,13 @@ function! copilot#insert_enter()
   if !s:ready() | return | endif
   call s:flush()
   let g:copilot_just_after_insert = 1
+  call timer_start(90, { -> s:reset_copilot_insert_flag() })
 endfunction
+
+function! s:reset_copilot_insert_flag()
+  let g:copilot_just_after_insert = 0
+endfunction
+
 
 function! copilot#complete_changed()
   if !s:ready() | return | endif
