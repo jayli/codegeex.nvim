@@ -247,8 +247,11 @@ class MyPlugin:
     # cancel POST
     @neovim.function("CancelCopilotComplete", sync=True)
     def cancel_complete(self, args):
-        if not self.post_task.done():
-            self.post_task.cancel()
+        try:
+            if not self.post_task.done():
+                self.post_task.cancel()
+        except Exception as e:
+            self.log(str(e))
 
 
     async def callback_task(self):
