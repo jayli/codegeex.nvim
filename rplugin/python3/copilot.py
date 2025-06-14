@@ -144,7 +144,7 @@ class MyPlugin:
         # "temperature": 0.1,
         # "top_p":0.1,
         return post_json
-    
+
     def get_aone_layload(self, prompt, suffix):
         post_json = {
             "file_path": self.FILE_NAME,
@@ -156,6 +156,11 @@ class MyPlugin:
             "top_p": 1
         }
         return post_json
+
+    async def wait_for_cancel(self):
+        while not self.post_task.done():
+            await asyncio.sleep(0.3)
+        return "done"
 
     async def get_completions(self, file_path, prompt, suffix, lnum, col, lang):
         # prompt 就是 prefix
@@ -196,10 +201,9 @@ class MyPlugin:
             #   被 cancel 掉
             #   请求正常返回
             #   timeout 后终止
-            while not self.post_task.done():
-                await asyncio.sleep(0.3)
 
-            res = await self.post_task  # 获取任务结果（不论是正常完成还是被取消）
+            results = await asyncio.gather(self.post_task, self.wait_for_cancel())
+            res = results[0]
 
             try:
                 if res["status"] == "timeout":
