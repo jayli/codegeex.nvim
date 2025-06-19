@@ -22,9 +22,11 @@ function M.prepend_char_to_statusline(char)
   -- 在开头插入带高亮的字符
   local new_statusline = "%#" .. prefix_hl_group .. "#" .. char .. " " .. original_statusline
   -- 设置新的 statusline
-  vim.o.statusline = new_statusline
+  -- vim.o.statusline = new_statusline
+  local current_win = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_option(current_win, "statusline", new_statusline)
   -- 可选：强制刷新一次状态栏
-  vim.cmd("redrawstatus")
+  -- vim.cmd("redrawstatus")
 end
 
 function set_loading_interval(interval, callback)

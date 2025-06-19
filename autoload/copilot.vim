@@ -129,8 +129,9 @@ function! s:bind_event_once()
       echom "Tab 键有冲突，请给 copilot 绑定其他补全键，比如 vim.g.copilot_trigger = '<c-m>'"
     endif
   else
-    iunmap <Tab>
-    inoremap <silent><expr>  <Tab>  copilot#tab_action()
+    call timer_start(500, {
+          \   -> s:lazy_bind_tab_action()
+          \ })
   endif
   if s:installed_cmp_plugin() == "easycomplete"
     augroup copilot_cmp_done
@@ -141,6 +142,11 @@ function! s:bind_event_once()
       autocmd CompleteDone * call copilot#complete_done()
     augroup END
   endif
+endfunction
+
+function! s:lazy_bind_tab_action()
+  iunmap <Tab>
+  inoremap <silent><expr>  <Tab>  copilot#tab_action()
 endfunction
 
 function! copilot#complete_done()

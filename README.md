@@ -2,17 +2,19 @@
 
 Nvim 基于 Deepseek 和 qwen 的 coder copilot 补全插件。
 
+> 阿里内网支持 Aone Copilot
+
 <img src="https://github.com/user-attachments/assets/37a4ab70-beff-4229-bee8-9aacd26d207f" width=400 />
 
 演示：
 
 https://github.com/user-attachments/assets/1065a9f3-213c-4fd6-829e-78021926d42b
 
-#### 一）安装：
+### 一）安装：
 
 1）配置 init.lua
 
-基于 Packer.nvim 最简单的配置：
+基于 Packer.nvim 最简单的配置，只配置 APIkey 默认支持的是 deepseek：
 
 ```lua
 use { 'jayli/copilot.nvim' }
@@ -30,9 +32,9 @@ pip install httpx
 pip install neovim
 ```
 
-#### 二） Deepseek 和 Qwen 获得 APIKey
+### 二） Deepseek 和 Qwen 获得 APIKey
 
-##### 1) 获得 deepseek apikey
+#### 1) 获得 deepseek apikey
 
 登录：<https://platform.deepseek.com/api_keys>
 
@@ -40,13 +42,13 @@ pip install neovim
 
 <img src="https://github.com/user-attachments/assets/3333d2c8-5156-43f9-89db-006e186d73fc" width=500 />
 
-##### 2) 获得 Qwen APIKey
+#### 2) 获得 Qwen APIKey
 
 登录阿里云后，参照这里获得 APIkey：<https://bailian.console.aliyun.com/?tab=api#/api/?type=model>
 
 api key 赋值给 `vim.g.copilot_apikey`。
 
-#### 三）使用
+### 三）使用
 
 插入模式下，正常输入时会自动联想，联想完成后敲 Tab 键完成补全，因为对 Tab 键有强绑定，所以也做了对一些常用补全插件的兼容（[coc](https://github.com/neoclide/coc.nvim)、[nvim-cmp](https://github.com/hrsh7th/nvim-cmp) 和 [vim-easycomplete](https://github.com/jayli/vim-easycomplete)）。
 
@@ -83,14 +85,14 @@ vim.g.copilot_base_url = "https://xxxxxxxxxxxxx"
 vim.g.copilot_llm = "aone"
 ```
 
-获得 apikey 和 base url，ATA 里搜一下。
+获得 apikey 和 base url，在 ATA 里搜一下。
 
 `copilot_base_url`后会拼接`/completions`。deepseek 默认支持的AI补全的模型是`deepseek-coder`。qwen 支持的模型[这里](https://bailian.console.aliyun.com/?tab=doc#/api/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2850166.html)查看。Aone Copilot 留空即可。
 
 注意：安装插件后第一次启动nvim会自动执行 `:UpdateRemotePlugins`，再重启一次 neovim 后可以正常使用了。
 
 
-#### 四）注意
+### 四）注意
 
 1）关于 deepseek 的速度问题
 
